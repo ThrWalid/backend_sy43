@@ -42,7 +42,7 @@ fun Application.configureUserRoutes() {
                 }
 
                 if (exists) {
-                    call.respond(HttpStatusCode.Conflict, "Email déjà utilisé")
+                    call.respond(HttpStatusCode.Conflict, "Email already used")
                     return@post
                 }
 
@@ -56,7 +56,11 @@ fun Application.configureUserRoutes() {
                     }
                 }
 
-                call.respond(HttpStatusCode.Created, "Compte créé avec succès")
+                call.respond(
+                    HttpStatusCode.Created,
+                    mapOf("message" to "Account created successfully")
+                )
+
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -74,14 +78,14 @@ fun Application.configureUserRoutes() {
                 }
 
                 if (user == null) {
-                    call.respond(HttpStatusCode.Unauthorized, "Email incorrect")
+                    call.respond(HttpStatusCode.Unauthorized, "Incorrect email")
                     return@post
                 }
 
                 val isPasswordCorrect = BCrypt.checkpw(body.password, user[UsersTable.password])
 
                 if (!isPasswordCorrect) {
-                    call.respond(HttpStatusCode.Unauthorized, "Mot de passe incorrect")
+                    call.respond(HttpStatusCode.Unauthorized, "Incorrect password")
                     return@post
                 }
 
@@ -117,9 +121,9 @@ fun Application.configureUserRoutes() {
                     }
 
                     if (updated == 1) {
-                        call.respond(HttpStatusCode.OK, "Profil mis à jour avec succès")
+                        call.respond(HttpStatusCode.OK, "Profile successfully updated")
                     } else {
-                        call.respond(HttpStatusCode.NotFound, "Utilisateur non trouvé")
+                        call.respond(HttpStatusCode.NotFound, "User not found")
                     }
                 }
             }
@@ -142,9 +146,9 @@ fun Application.configureUserRoutes() {
                 }
 
                 if (deleted == 1) {
-                    call.respond(HttpStatusCode.OK, "Utilisateur supprimé avec succès")
+                    call.respond(HttpStatusCode.OK, "User successfully deleted")
                 } else {
-                    call.respond(HttpStatusCode.NotFound, "Utilisateur non trouvé")
+                    call.respond(HttpStatusCode.NotFound, "User not found")
                 }
             }
 

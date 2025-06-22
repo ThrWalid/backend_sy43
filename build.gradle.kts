@@ -1,8 +1,7 @@
 // ✅ build.gradle.kts
 plugins {
     kotlin("jvm") version "1.9.24"
-    kotlin("plugin.serialization") version "1.9.24" // ✅ هذا السطر ضروري!
-
+    kotlin("plugin.serialization") version "1.9.24"
     application
 }
 
@@ -10,7 +9,7 @@ group = "org.example"
 version = "1.0-SNAPSHOT"
 
 val ktorVersion = "2.3.8"
-val exposedVersion = "0.41.1"
+val exposedVersion = "0.45.0" // ✅ Unified Exposed version
 val postgresVersion = "42.7.3"
 val logbackVersion = "1.4.14"
 
@@ -26,16 +25,17 @@ dependencies {
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
 
-
-    // ✅ Optional but useful middlewares
+    // ✅ Useful Ktor middlewares
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-server-default-headers:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
 
-
+    // ✅ Unified Exposed versions
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("com.zaxxer:HikariCP:5.1.0")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
@@ -53,6 +53,7 @@ kotlin {
 application {
     mainClass.set("MainKt")
 }
+
 tasks.named<JavaExec>("run") {
     classpath = sourceSets["main"].runtimeClasspath
 }
