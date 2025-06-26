@@ -32,8 +32,10 @@ object DatabaseFactory {
             SchemaUtils.create(
                 UsersTable,
                 FriendsTable,
+                EventsTable,
+                MessagesTable
             )
-            println("✅ All tables created.")
+            println("All tables created.")
         }
 
 

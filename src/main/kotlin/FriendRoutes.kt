@@ -23,7 +23,7 @@ fun Application.configureFriendRoutes() {
                     UsersTable.select { UsersTable.email eq email }.singleOrNull()?.get(UsersTable.id)?.value
                 }
 
-                // ✅ Envoyer une demande d'ami
+                //  Envoyer une demande d'ami
                 post("/send-request") {
                     val principal = call.principal<JWTPrincipal>()
                     val senderEmail = principal?.payload?.getClaim("email")?.asString() ?: return@post call.respond(HttpStatusCode.Unauthorized)
@@ -53,7 +53,7 @@ fun Application.configureFriendRoutes() {
                     call.respond(HttpStatusCode.OK, "Demande d'ami envoyée")
                 }
 
-                // ✅ Accepter une demande
+                //  Accepter une demande
                 post("/accept-request") {
                     val principal = call.principal<JWTPrincipal>()
                     val receiverEmail = principal?.payload?.getClaim("email")?.asString() ?: return@post call.respond(HttpStatusCode.Unauthorized)
@@ -79,7 +79,7 @@ fun Application.configureFriendRoutes() {
                     else call.respond(HttpStatusCode.NotFound, "Demande non trouvée")
                 }
 
-                // ✅ Supprimer un ami
+                //  Supprimer un ami
                 delete("/remove/{friendId}") {
                     val friendId = call.parameters["friendId"]?.toIntOrNull()
                     if (friendId == null) {
@@ -98,10 +98,10 @@ fun Application.configureFriendRoutes() {
                         }
                     }
 
-                    call.respond(HttpStatusCode.OK, "Ami supprimé")
+                    call.respond(HttpStatusCode.OK, "friend deleted ")
                 }
 
-                // ✅ Lister les amis
+                // list of friends
                 get {
                     val principal = call.principal<JWTPrincipal>()
                     val email = principal?.payload?.getClaim("email")?.asString() ?: return@get call.respond(HttpStatusCode.Unauthorized)
@@ -124,7 +124,7 @@ fun Application.configureFriendRoutes() {
                     call.respond(HttpStatusCode.OK, friends)
                 }
 
-                // ✅ Pending requests received
+                //  Pending requests received
                 get("/pending") {
                     val principal = call.principal<JWTPrincipal>()
                     val receiverEmail = principal?.payload?.getClaim("email")?.asString() ?: return@get call.respond(HttpStatusCode.Unauthorized)
@@ -143,7 +143,7 @@ fun Application.configureFriendRoutes() {
                     call.respond(HttpStatusCode.OK, pending)
                 }
 
-                // ✅ Pending requests sent
+                //  Pending requests sent
                 get("/sent") {
                     val principal = call.principal<JWTPrincipal>()
                     val senderEmail = principal?.payload?.getClaim("email")?.asString() ?: return@get call.respond(HttpStatusCode.Unauthorized)

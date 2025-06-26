@@ -1,4 +1,4 @@
-// ✅ UsersTable.kt
+// UsersTable.kt
 import org.jetbrains.exposed.dao.id.IntIdTable
 
 object UsersTable : IntIdTable("users") {

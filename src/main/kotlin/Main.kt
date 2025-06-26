@@ -12,83 +12,63 @@ import io.ktor.server.response.*
 import io.ktor.server.request.*
 import io.ktor.http.*
 import io.ktor.server.routing.*
-
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.Instant
 
+//  Import database + JWT
 import DatabaseFactory
+import UsersTable
+import JwtConfig
+
+//  Import routes
 import configureUserRoutes
 import configureFriendRoutes
 import configureHomeRoutes
-import UsersTable
+import configureEventsRoutes
+import configureMessageRoutes
+
 
 fun main() {
-    // Init DB
     DatabaseFactory.init()
 
-    // Start Ktor Server
     embeddedServer(Netty, port = 8080) {
-
-        // JWT Authentication
         install(Authentication) {
             jwt("auth-jwt") {
                 JwtConfig.configureKtorFeature(this)
             }
         }
 
-        // JSON
         install(ContentNegotiation) {
             json()
         }
 
-        // Logging & headers
         install(DefaultHeaders)
         install(CallLogging)
+        install(CORS) {
+            anyHost()
+            allowHeader(HttpHeaders.ContentType)
+            allowHeader(HttpHeaders.Authorization)
+            allowMethod(HttpMethod.Get)
+            allowMethod(HttpMethod.Post)
+            allowMethod(HttpMethod.Put)
+            allowMethod(HttpMethod.Delete)
+        }
 
-        // Custom route configs
         configureUserRoutes()
         configureFriendRoutes()
         configureHomeRoutes()
-
-
+        configureEventsRoutes()
+        configureMessageRoutes()
 
         routing {
-
-
-
-            // Test public
             get("/") {
-                call.respondText("Ktor is working perfectly and connected to PostgreSQL!")
-            }
-
-            // Protected /me route
-            authenticate("auth-jwt") {
-                get("/me") {
-                    val principal = call.principal<JWTPrincipal>()
-                    val email = principal?.payload?.getClaim("email")?.asString()
-
-                    if (email == null) {
-                        call.respond(HttpStatusCode.Unauthorized, "Invalid or missing token")
-                        return@get
-                    }
-
-                    val user = transaction {
-                        UsersTable.select { UsersTable.email eq email }.singleOrNull()
-                    }
-
-                    if (user == null) {
-                        call.respond(HttpStatusCode.NotFound, "User not found")
-                    } else {
-                        call.respond(
-                            mapOf(
-                                "name" to user[UsersTable.name],
-                                "email" to user[UsersTable.email]
-                            )
-                        )
-                    }
-                }
+                call.respondText("Ktor backend running perfectly with PostgreSQL!")
             }
         }
-
     }.start(wait = true)
 }
+
